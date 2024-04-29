@@ -1,12 +1,27 @@
-
-import './App.css'
+import { useState } from "react";
 
 function App() {
-  return (
-    <div className='container'>
-		<h1>01-react-basic</h1>
-    </div>
-  );
+	const [counter, setCounter] = useState(1);
+	//let counter = 1;
+
+	console.log("App is being redered")
+
+	const handleBtnClick = () => {
+		console.log("Counter before update", counter);
+		setCounter(counter + 1);
+		console.log("Counter after update", counter);
+
+	}
+
+	return (
+		<div className='container'>
+			<h1>01-react-basic</h1>
+
+			<p>Counter: {counter}</p>
+
+			<button onClick={handleBtnClick} className="btn btn-success">Click me</button>
+		</div >
+	);
 }
 
 export default App
