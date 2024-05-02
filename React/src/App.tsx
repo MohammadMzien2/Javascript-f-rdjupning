@@ -1,47 +1,57 @@
-import { useState } from 'react'
 import './App.css'
+import { useState } from 'react'
+import Title from './components/title'
+import Modal from './components/modal'
+import EventList from './components/EventList'
+import NewEventForm from './components/NewEventForm'
 
 function App() {
-	const [showEvents, setShowEvents] = useState(true)
-	const [events, setEvents] = useState([
-		{ title: "mario's birthday bash", id: 1 },
-		{ title: "luigi's birthday bash", id: 2 },
-		{ title: "ha's birthday bash", id: 3 }
-	])
+  const [showModal, setShowModal] = useState(false)
+  const [showEvents, setShowEvents] = useState(true)
+  const [events, setEvents] = useState([])
 
-	const handleClick = (id) => {
-		setEvents((prevEvents) => {
-			return prevEvents.filter((event) => {
-				return id !== event.id
+  const addEvent = (event) => {
+    setEvents(prevEvents => {
+      return [...prevEvents, event]
+    })
+    setShowModal(false)
+  }
 
-			})
-		})
-	}
+  const handleClick = (id) => {
+    setEvents(prevEvents => {
+      return prevEvents.filter(event => id !== event.id)
+    })
+  }
 
+  const subtitle = "All the latest events in Marioland"
 
+  return (
+    <div className="App">
+      <Title title="Marioland Events" subtitle={subtitle} />
 
-	return (
-		<div className='App'>
-			{showEvents && (
+      {showEvents && (
+        <div>
+          <button onClick={() => setShowEvents(false)}>Hide Events</button>
+        </div>
+      )}
+      {!showEvents && (
+        <div>
+          <button onClick={() => setShowEvents(true)}>Show Events</button>
+        </div>
+      )}
+      {showEvents && <EventList events={events} handleClick={handleClick} />}
 
-				<div>
-					<button onClick={() => setShowEvents(false)}>Hide events</button>
-				</div>
-			)}
-			{!showEvents && (
-				<div>
-					<button onClick={() => setShowEvents(true)}>Show events</button>
-				</div>
-			)}
-			{showEvents && events.map((event, index) => (
-				<div key={event.id}>
-					<h2>{index} - {event.title}</h2>
-					<button onClick={() => handleClick(event.id)}>delete event</button>
-				</div>
-			))}
+      {showModal && (
+        <Modal>
+          <NewEventForm addEvent={addEvent} />
+        </Modal>
+      )}
 
-		</div>
-	);
+      <div>
+        <button onClick={() => setShowModal(true)}>Add New Event</button>
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
