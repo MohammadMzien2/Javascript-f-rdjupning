@@ -17,6 +17,7 @@ function App() {
 		{ id: 3, title: "Got state?", likes: 3 },
 	]);
 	const [showSalary, setShowSalary] = useState(false);
+	const [inputPostTitle, setinputPostTitle] = useState("");
 
 	console.log("App is being rendered");
 
@@ -29,50 +30,78 @@ function App() {
 		setPosts(posts.filter(post => post !== postToDelete));
 	}
 
-	return (
-		<div className="container">
-			<h1>01-react-basics</h1>
+	const handleFormSubmit = (e: React.FormEvent) => {
+		// stop form from submitting
+		e.preventDefault();
 
-			<p>{msg}</p>
+		// Create new post
+		const newPost: Post = {
+			id: Math.max(...posts.map(post => post.id)) + 1,
+			title: inputPostTitle,
+			likes: 0,
+			}
+			posts.push(newPost);
 
-			<button onClick={() => setMsg("Hi dad!")} className="btn btn-warning">Hi dad?</button>
+			//Clear input field
+			setinputPostTitle("");
+		}
 
-			<hr />
+		return (
+			<div className="container">
+				<h1>01-react-basics</h1>
 
-			<Counter />
-			<Counter />
+				<p>{msg}</p>
 
-			<hr />
+				<button onClick={() => setMsg("Hi dad!")} className="btn btn-warning">Hi dad?</button>
 
-			<button onClick={() => setShowSalary(!showSalary)} className={!showSalary ? "btn btn-warning" : "btn btn-danger"}>
-				{!showSalary ? "Show salary" : "Hide salary"}
-			</button>
+				<hr />
 
-			{showSalary && <Salary />}
+				<Counter />
+				<Counter />
 
-			<hr />
+				<hr />
 
-			<h2>Posts</h2>
+				<button onClick={() => setShowSalary(!showSalary)} className={!showSalary ? "btn btn-warning" : "btn btn-danger"}>
+					{!showSalary ? "Show salary" : "Hide salary"}
+				</button>
 
-			{posts.length > 0 && (
-				<ul>
-					{posts.map(post =>
-						<li key={post.id}>
-							{post.title} ({post.likes} likes)
-							<button
-								className="btn btn-success btn-sm ms-1"
-								onClick={() => handleAddLike(post)}
-							>❤️</button>
-							<button
-								className="btn btn-danger btn-sm ms-1"
-								onClick={() => handleDeletePost(post)}
-							>🗑️</button>
-						</li>
-					)}
-				</ul>
-			)}
-		</div>
-	);
-}
+				{showSalary && <Salary />}
 
-export default App;
+				<hr />
+
+				<h2>Posts</h2>
+
+				<form onSubmit={handleFormSubmit} className="mb-3">
+					<div className="input-group">
+
+						<input type="text" className="form-control" placeholder="Fun with Forms" required aria-label="Post Title" onChange={(e) => setinputPostTitle(e.target.value)} value={inputPostTitle} />
+
+						<button type="submit" className="btn btn-success">
+							Create
+						</button>
+
+					</div>
+				</form>
+
+				{posts.length > 0 && (
+					<ul>
+						{posts.map(post =>
+							<li key={post.id}>
+								{post.title} ({post.likes} likes)
+								<button
+									className="btn btn-success btn-sm ms-1"
+									onClick={() => handleAddLike(post)}
+								>❤️</button>
+								<button
+									className="btn btn-danger btn-sm ms-1"
+									onClick={() => handleDeletePost(post)}
+								>🗑️</button>
+							</li>
+						)}
+					</ul>
+				)}
+			</div>
+		);
+	}
+
+	export default App;
