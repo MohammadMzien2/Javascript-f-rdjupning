@@ -40,6 +40,15 @@ function App() {
 		setSalary(salary + amount);
 	}
 
+	const handleAddLike = (post: Post) => {
+		post.likes++;
+		setPosts([...posts]);
+	}
+
+	const handleDeletePost = (postToDelete: Post) => {
+		setPosts( posts.filter(post => post !== postToDelete))
+	}
+
 	return (
 		<div className="container">
 			<h1>01-react-basics</h1>
@@ -53,7 +62,10 @@ function App() {
 
 			<hr />
 
-			<button onClick={() => setShowSalary(!showSalary)} className="btn btn-primary">Show / Hide salary</button>
+			<button onClick={() => setShowSalary(!showSalary)} className={showSalary ? "btn btn-warning" :
+				"btn btn-info"
+			}>
+				{!showSalary ? "Show salary" : "Hide salary"}</button>
 
 
 			{showSalary && (
@@ -88,7 +100,7 @@ function App() {
 					</div>
 
 					<hr />
-					</>
+				</>
 
 			)}
 
@@ -96,7 +108,19 @@ function App() {
 
 			<ul>
 				{posts.map(post =>
-					<li key={post.id}>{post.title} ({post.likes} likes)</li>
+					<li key={post.id}>{post.title} ({post.likes} likes)
+						<button
+							className="btn btn-success btn-sm ms-1"
+							onClick={() => handleAddLike(post)}
+						>
+						</button>
+						<button
+							className="btn btn-danger btn-sm ms-1"
+							onClick={() => handleDeletePost(post)}
+						>🗑️</button>
+
+					</li>
+
 				)}
 			</ul>
 		</div>
