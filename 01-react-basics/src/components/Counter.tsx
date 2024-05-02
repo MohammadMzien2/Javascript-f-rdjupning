@@ -10,6 +10,8 @@ const Counter = () => {
 		console.log("Counter after update:", counter);
 	}
 
+	console.log("Counter is being rendered");
+
 	return (
 		<div>
 			<h2>Counter</h2>
