@@ -1,11 +1,20 @@
 import "./assets/App.scss";
+import { useState } from "react";
+import Clock from "./components/Clock";
+
 
 function App() {
+
+	const [showClock, setShowClock] = useState(false);
+
 	return (
 		<div className="container">
-			<div className="display-1 text-center">
-				00:13:37
-			</div>
+			<button className="btn btn-primary"
+				onClick={() => setShowClock(!showClock)}>
+				Show / Hide clock
+			</button>
+
+			{showClock && <Clock />}
 		</div>
 	);
 }
