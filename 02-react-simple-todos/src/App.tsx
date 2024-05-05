@@ -1,75 +1,114 @@
-import { useState } from 'react'
-import { Todo } from './types/Todo'
-import "./assets/App.scss"
-
+import { useEffect, useState } from "react";
+import TodoListItem from "./components/TodoListItem";
+import { Todo } from "./types/Todo";
+import "./assets/App.scss";
 
 function App() {
-	const [todos, setTodo] = useState<Todo[]>([
+	const [todos, setTodos] = useState<Todo[]>([
 		{ id: 1, title: "Make coffee", completed: true },
 		{ id: 2, title: "Drink coffee", completed: false },
 		{ id: 3, title: "Drink MOAR coffee", completed: false },
 		{ id: 4, title: "Drink ALL ZE coffee", completed: false },
 	]);
-	const [inputValue, setInputValue] = useState("");
+	const [inputNewTodoTitle, setInputNewTodoTitle] = useState("");
 
 	const handleAddTodo = (e: React.FormEvent) => {
 		e.preventDefault();
 
-		setTodo([...todos, {
+		setTodos([...todos, {
 			id: Math.max(0, ...todos.map(todo => todo.id)) + 1,
-			title: inputValue,
+			title: inputNewTodoTitle,
 			completed: false,
 		}]);
 
-		setInputValue("");
-	};
+		setInputNewTodoTitle("");
+	}
 
 	const handleToggleTodo = (todo: Todo) => {
 		todo.completed = !todo.completed;
-		setTodo([...todos]); // force re-render
-
+		setTodos([...todos]);
 	}
 
-	const numberComplete = todos.filter(todos => todos).length;
-	const numberTotal = todos.length
+	const handleDeleteTodo = (todo: Todo) => {
+		setTodos([...todos.filter(t => t !== todo)]);
+	}
+
+	const finishedTodos = todos.filter(todo => todo.completed);
+	const unfinishedTodos = todos.filter(todo => !todo.completed);
+
+	console.log("Component is rendering");
+
+	// Our first side-effect
+	useEffect(() => {
+		// This code will only be executed **AFTER** the component has rendered
+		// AND if the length of unfinished todos has changed SINCE THE LAST RENDER
+		console.log("🚨 The length of unfinished todos has changed!");
+		document.title = `${unfinishedTodos.length} todos unfinished 🇫🇮`;
+	}, [ unfinishedTodos.length ]);
+
+	// This will only be executed when the component is mounted,
+	// and only AFTER the component has been rendered
+	useEffect(() => {
+		console.log("Look mom, I'm a newly mounted component 👶🏻");
+	}, []);
 
 	return (
-		<>
-
-			<h1>{numberComplete} av {numberTotal} completed </h1>
-			<h1>Simple todos!</h1>
+		<div className="container">
+			<h1>React Simple Todos</h1>
 
 			<form onSubmit={handleAddTodo} className="mb-3">
 				<div className="input-group">
-
-					<input type="text" className="form-control" placeholder="Fun with Forms"
-						required aria-label="Post Title" onChange={e => setInputValue(e.target.value)} value={inputValue} />
-
-					<button type="submit" className="btn btn-success">
-						Create
-					</button>
+					<input
+						aria-label="New todo title"
+						className="form-control"
+						onChange={e => setInputNewTodoTitle(e.target.value)}
+						placeholder="Learn about GTD"
+						required
+						type="text"
+						value={inputNewTodoTitle}
+					/>
 
 					<button className="btn btn-success" type="submit">👶🏻</button>
 				</div>
 			</form>
 
-			<ul className="todolist list-group">
-				{todos.map(todo => (
-					<li key={todo.id} className={todo.completed ? "done list-group-item" : "list-group-item"}>
-						<span className="todo-title">{todo.title}</span>
+			{todos.length > 0 && (
+				<>
+					<h2 className="mb-2 h5">💪🏻 Stuff I got to do</h2>
+					<ul className="todolist list-group">
+						{unfinishedTodos.map(todo => (
+							<TodoListItem
+								key={todo.id}
+								onDelete={handleDeleteTodo}
+								onToggle={handleToggleTodo}
+								todo={todo}
+							/>
+						))}
+					</ul>
 
-						<div>
-							<button
-								className="btn btn-sm btn-warning"
-								onClick={() => handleToggleTodo(todo)}
-							>{todo.completed ? "✅" : "☑️"}</button>
-						</div>
-					</li>
-				))}
-			</ul>
+					<h2 className="mb-2 h5">🥺 Stuff I've done</h2>
+					<ul className="todolist list-group">
+						{finishedTodos.map(todo => (
+							<TodoListItem
+								key={todo.id}
+								onDelete={handleDeleteTodo}
+								onToggle={handleToggleTodo}
+								todo={todo}
+							/>
+						))}
+					</ul>
 
-		</>
-	)
+					<p className="mt-3 text-muted">
+						{unfinishedTodos.length} out of {todos.length} todos completed.
+					</p>
+				</>
+			)}
+
+			{!todos.length && (
+				<div className="alert alert-success">You ain't got no todos 🤩!</div>
+			)}
+		</div>
+	);
 }
 
-export default App
+export default App;
