@@ -40,9 +40,12 @@ const AddNewTodoForm: React.FC<AddNewTodoFormProps> = ({ onAddTodo, todos }) => 
 				/>
 
 				<button className="btn btn-success" disabled={inputNewTodoTitle.trim().length < 3}
-				 type="submit">👶🏻</button>
+					type="submit">👶🏻</button>
 			</div>
-		</form>
+
+			{inputNewTodoTitle.trim().length > 0 && inputNewTodoTitle.trim().length < 3 && (
+				<div className="form-text text-danger">Please enter 3 chaars or more</div>
+			)}		</form>
 	)
 }
 
