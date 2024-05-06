@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getResource } from "./services/JSONPlaceHolderAPI";
 import { Resource } from "./types/Resource";
 import "./assets/App.scss";
+import ResourceList from "./components/ResourceList";
 
 function App() {
 	const [resource, setResource] = useState("");
@@ -61,23 +62,14 @@ function App() {
 				<button onClick={() => setResource('memes')} className="btn btn-info">Memes</button>
 			</div>
 
-			{isLoading && <p>Loading ...</p>}
+			<ResourceList
+			data={data}
+			isLoading={isLoading}
+			error={error}
+			resource={resource}
+			 />
 
-			{error && <div className="alert alert-warning"> {error} </div>}
 
-
-			{!isLoading && resource && data.length > 0 && (
-				<>
-					<h2>{resource}</h2>
-					<p>There are {data.length} {resource}.</p>
-
-					<ol>
-						{data.map(item => (
-							<li key={item.id}>{item.title}</li>
-						))}
-					</ol>
-				</>
-			)}
 		</div>
 	)
 }
