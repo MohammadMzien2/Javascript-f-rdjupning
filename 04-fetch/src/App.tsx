@@ -1,24 +1,48 @@
 import { useEffect, useState } from "react";
+import { getResource } from "./services/JSONPlaceHolderAPI";
 import { Resource } from "./types/Resource";
 import "./assets/App.scss";
 
 function App() {
 	const [resource, setResource] = useState("");
 	const [data, setData] = useState<Resource[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<string | false>("false");
 
 	// Hämta api
 	useEffect(() => {
-		if (!resource) {
-			return;
-		}
+
 
 		console.log("Side-effect triggered due to resource changing value", resource);
 
 		const fetchData = async () => {
-			const res = await fetch(`https://jsonplaceholder.typicode.com/${resource}`);
-			const payload = await res.json();
-			setData(payload);
+			if (!resource) {
+				return;
+			}
+
+			// Reset Data
+			setData([]);
+			setIsLoading(true);
+			setError(false);
+
+			try {
+				// Make the actual request
+				const payload = await getResource(resource);
+
+				// set data to payload and loading state to false
+				setData(payload);
+			} catch (err) {
+				if (err instanceof Error) {
+					console.log("This happened:", err.message);
+					setError(err.message);
+				} else {
+					setError("This should never happen again...")
+				}
+			}
+
+			setIsLoading(false);
 		}
+
 		fetchData();
 	}, [resource]);
 
@@ -35,10 +59,14 @@ function App() {
 				<button onClick={() => setResource('posts')} className="btn btn-warning">Posts</button>
 				<button onClick={() => setResource('todos')} className="btn btn-danger">Todos</button>
 				<button onClick={() => setResource('memes')} className="btn btn-info">Memes</button>
-
 			</div>
 
-			{data && (
+			{isLoading && <p>Loading ...</p>}
+
+			{error && <div className="alert alert-warning"> {error} </div>}
+
+
+			{!isLoading && resource && data.length > 0 && (
 				<>
 					<h2>{resource}</h2>
 					<p>There are {data.length} {resource}.</p>
