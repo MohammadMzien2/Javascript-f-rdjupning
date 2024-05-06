@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Resource } from "./types/Resource";
-import "./assets/scss/App.scss";
+import "./assets/App.scss";
 
 function App() {
 	const [resource, setResource] = useState('posts');
