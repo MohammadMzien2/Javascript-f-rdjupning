@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import { Todo } from '../types/Todo';
+import { useEffect, useRef, useState } from 'react';
+import { newTodo } from '../types/Todo';
 
 interface AddNewTodoFormProps {
-	onAddTodo: (todo: Todo) => void;
-	todos: Todo[];
+	onAddTodo: (todo: newTodo) => void;
 }
 
-const AddNewTodoForm: React.FC<AddNewTodoFormProps> = ({ onAddTodo, todos }) => {
+const AddNewTodoForm: React.FC<AddNewTodoFormProps> = ({ onAddTodo }) => {
 	const [inputNewTodoTitle, setInputNewTodoTitle] = useState("");
+	const inputNewTodoTitleRef = useRef<HTMLInputElement>(null);
 
 	const handleAddTodo = (e: React.FormEvent) => {
 		e.preventDefault();
 
 		// create a new todo
 		const newTodo = {
-			id: Math.max(0, ...todos.map(todo => todo.id)) + 1,
 			title: inputNewTodoTitle.trim(),
 			completed: false,
 		}
@@ -25,6 +24,12 @@ const AddNewTodoForm: React.FC<AddNewTodoFormProps> = ({ onAddTodo, todos }) => 
 		// clear input value
 		setInputNewTodoTitle("");
 	}
+
+	// On component mount, focus on the input field
+	useEffect(() => {
+		inputNewTodoTitleRef.current?.focus();
+	}, []);
+
 
 	return (
 		<form onSubmit={handleAddTodo} className="mb-3">
@@ -43,9 +48,10 @@ const AddNewTodoForm: React.FC<AddNewTodoFormProps> = ({ onAddTodo, todos }) => 
 					type="submit">👶🏻</button>
 			</div>
 
-			{inputNewTodoTitle.trim().length > 0 && inputNewTodoTitle.trim().length < 3 && (
+			{inputNewTodoTitle.trim().length > 0 && inputNewTodoTitle.trim().length > 3 && (
 				<div className="form-text text-danger">Please enter 3 chaars or more</div>
-			)}		</form>
+			)}
+		</form>
 	)
 }
 
