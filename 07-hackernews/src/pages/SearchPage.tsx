@@ -5,6 +5,7 @@ import Form from "react-bootstrap/Form";
 import ListGroup from "react-bootstrap/ListGroup";
 import { searchByDate as HN_searchByDate } from "../services/HackerNewsAPI";
 import { HN_SearchResponse } from "../services/HackerNewsAPI.types";
+import Pagination from "./Pagination";
 
 const SearchPage = () => {
 	const [error, setError] = useState<string | false>(false);
@@ -15,6 +16,7 @@ const SearchPage = () => {
 	const queryRef = useRef("");
 
 	const searchHackerNews = async (searchQuery: string, searchPage = 0) => {
+		console.log(`Searching for "${searchQuery}" and page ${searchPage}`);
 		// reset state + set loading to true
 		setError(false);
 		setIsLoading(true);
@@ -65,8 +67,9 @@ const SearchPage = () => {
 		if (!queryRef.current) {
 			return;
 		}
-		searchHackerNews(queryRef.current, page)
-	}, [page])
+
+		searchHackerNews(queryRef.current, page);
+	}, [page]);
 
 	return (
 		<>
@@ -120,19 +123,14 @@ const SearchPage = () => {
 						</ListGroup>
 					)}
 
-					<div className="d-flex justify-content-between align-items-center">
-						<div className="prev">
-							<Button variant="primary" disabled={page <= 0} onClick={() => { setPage(prevValue => prevValue - 1) }} >
-								Previous Page</Button>
-						</div>
-
-						<div className="page">PAGE {searchResult.page + 1}</div>
-
-						<div className="next">
-							<Button variant="primary" disabled={ page + 1 >= searchResult.nbPages} onClick={() => { setPage(prevValue => prevValue + 1) }}>
-								Next Page</Button>
-						</div>
-					</div>
+					<Pagination
+						hasPreviousPage={searchResult.page > 0}
+						hasNextPage={searchResult.page + 1 < searchResult.nbPages}
+						onNextPage={() => { setPage(prevValue => prevValue + 1); }}
+						onPreviousPage={() => { setPage(prevValue => prevValue - 1); }}
+						page={searchResult.page + 1}
+						totalPages={searchResult.nbPages}
+					/>
 				</div>
 			)}
 		</>
