@@ -9,11 +9,12 @@ import { HN_SearchResponse } from "../services/HackerNewsAPI.types";
 const SearchPage = () => {
 	const [error, setError] = useState<string | false>(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [page, setPage] = useState(0);
 	const [searchInput, setSearchInput] = useState("");
 	const [searchResult, setSearchResult] = useState<HN_SearchResponse | null>(null);
 	const queryRef = useRef("");
 
-	const searchHackerNews = async (searchQuery: string) => {
+	const searchHackerNews = async (searchQuery: string, searchPage = 0) => {
 		// reset state + set loading to true
 		setError(false);
 		setIsLoading(true);
@@ -24,7 +25,7 @@ const SearchPage = () => {
 
 		// get search results from API
 		try {
-			const data = await HN_searchByDate(searchQuery);
+			const data = await HN_searchByDate(searchQuery, searchPage);
 
 			// update state with search results
 			setSearchResult(data);
@@ -55,8 +56,17 @@ const SearchPage = () => {
 		}
 
 		// search HN
-		searchHackerNews(trimmedSearchInput);
+		setPage(0);
+		searchHackerNews(trimmedSearchInput, 0);
 	}
+
+	// React to changes in our page state
+	useEffect(() => {
+		if (!queryRef.current) {
+			return;
+		}
+		searchHackerNews(queryRef.current, page)
+	}, [page])
 
 	return (
 		<>
@@ -112,13 +122,15 @@ const SearchPage = () => {
 
 					<div className="d-flex justify-content-between align-items-center">
 						<div className="prev">
-							<Button variant="primary">Previous Page</Button>
+							<Button variant="primary" disabled={page <= 0} onClick={() => { setPage(prevValue => prevValue - 1) }} >
+								Previous Page</Button>
 						</div>
 
-						<div className="page">PAGE</div>
+						<div className="page">PAGE {searchResult.page + 1}</div>
 
 						<div className="next">
-							<Button variant="primary">Next Page</Button>
+							<Button variant="primary" disabled={ page + 1 >= searchResult.nbPages} onClick={() => { setPage(prevValue => prevValue + 1) }}>
+								Next Page</Button>
 						</div>
 					</div>
 				</div>
