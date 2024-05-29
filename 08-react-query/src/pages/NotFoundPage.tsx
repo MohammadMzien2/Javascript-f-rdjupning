@@ -1,7 +1,7 @@
 import Button from "react-bootstrap/Button";
 import Image from "react-bootstrap/Image";
 import { Link } from "react-router-dom";
-import SadKittyCat from "../assets/images/sad-kitten.gif";
+import SadKittyCat from "../assets/scss/images/sad-kitten.gif";
 
 const NotFoundPage = () => {
 	return (
